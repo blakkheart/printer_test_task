@@ -1,0 +1,32 @@
+version: '3'
+
+volumes:
+  pg_data:
+  pdf:
+
+services:
+  
+  # redis:
+  #   image: redis:alpine
+  
+  db:
+    image: postgres:16.2
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      PGPORT: 5433
+      DB_HOST: db
+    ports:
+      - "127.0.0.1:5433:5433"
+
+  wkhtmltopdf:
+    build: ./wkhtmltopdf/
+    ports:
+      - "127.0.0.1:7771:80"
+    volumes:
+      - pdf:/tmp/
+    

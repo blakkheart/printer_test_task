@@ -59,8 +59,12 @@ WSGI_APPLICATION = 'forfar.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': 5433,
     }
 }
 
@@ -94,6 +98,6 @@ STATIC_URL = 'static/'
 STATIC_ROTT = '/static'
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = '/media'
+MEDIA_ROOT = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

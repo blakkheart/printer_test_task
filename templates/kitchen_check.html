@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -25,7 +26,7 @@
   <body>
     <div class="container">
       <div class="row">
-        <h2 class="col col-3">№ {{ data.id }}</h2>
+        <h2 class="col col-3">№ {{ data_kitchen.id }}</h2>
       </div>
       <div class="row">
         <table class="table" width="830px">
@@ -37,7 +38,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for item in data.items %}
+            {% for item in data_kitchen.items %}
             <tr>
               <td>{{ item.name }}</td>
               <td>{{ item.quantity }}</td>
@@ -47,7 +48,7 @@
             <tr>
               <td></td>
               <td>ИТОГО:</td>
-              <td>{{ data.price }}</td>
+              <td>{{ data_kitchen.price }}</td>
             </tr>
           </tbody>
         </table>

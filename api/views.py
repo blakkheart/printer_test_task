@@ -1,11 +1,15 @@
+import json
+import base64
+import requests
 from django.template import Context
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from core.models import Printer, Check
 from rest_framework import status
-
-from django.template.loader import get_template
+from django.conf import settings
+from django.template.loader import get_template, render_to_string
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 @api_view(['POST'])
@@ -35,17 +39,45 @@ def create_checks(request):
 
     for printer in printers:
         check_type = printer.check_type
+        print(check_type)
         if check_type == 'CL':
-            template = get_template('client_check.html')
+            html = render_to_string(
+                '../templates/client_check.html', context={'data_client': request.data})
+            # template = get_template('client_check.html')
         else:
-            template = get_template('kitchen_check.html')
-        html = template.render({'data': data})
+            html = render_to_string(
+                '../templates/kitchen_check.html', context={'data_kitchen': request.data})
+            # template = get_template('kitchen_check.html')
+        # html = template.render({'data': data})
 
+        # print(type(html))
+
+        # pdf
+        # print(html)
+
+        url = 'http://127.0.0.1:7771/'
+        content = base64.b64encode(html.encode('utf-8')).decode("utf-8")
+        data = {
+            'contents': content,
+        }
+
+        headers = {
+            'Content-Type': 'application/json',    # This is important
+        }
+        response = requests.post(url, data=json.dumps(data), headers=headers)
+        pdf_file = SimpleUploadedFile(
+            'file.pdf', response.content, content_type='application/pdf')
+        # Save the response contents to a file
+        # print(response.content)
+        # pdf
+        # dir = str(settings.BASE_DIR) + '/templates/file.pdf'
+        # with open(dir, 'wb') as f:
+        #     f.write(response.content)
         Check.objects.create(
             printer_id=printer,
             type=check_type,
             order=request.data,
-            # pdf_file ?
+            pdf_file=pdf_file
         )
 
     # генерация ПДФ через воркеров ?
@@ -66,24 +98,3 @@ def get_check(request):
     checks = Check.objects.all().first()
 
     return Response({'checks': 1})
-
-
-@csrf_exempt
-def func(request):
-    data = request.data
-    order_id = data.get('id')
-    point_id = data.get('point_id')
-
-    printers = Printer.objects.filter(point_id=point_id)
-
-    for printer in printers:
-        check_type = printer.check_type
-        if check_type == 'client':
-            template = get_template('client_check.html')
-        else:
-            template = get_template('kitchen_check.html')
-
-        context = request.data
-
-        html = template.render(context)
-        return html
