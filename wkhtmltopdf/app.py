@@ -31,7 +31,6 @@ def application(request):
         if request_is_json:
             # If a JSON payload is there, all data is in the payload
             payload = json.loads(request.data)
-            # print(payload['contents'])
             source_file.write(base64.b64decode(
                 payload['contents'].encode('utf-8')))
             options = payload.get('options', {})
@@ -55,9 +54,7 @@ def application(request):
 
         # Add source file name and output file name
         file_name = source_file.name
-        # file_name += '.pdf'
         args += [file_name, file_name + ".pdf"]
-        print(args)
         # Execute the command using executor
         execute(' '.join(args))
         return Response(
@@ -65,11 +62,6 @@ def application(request):
                 file_name + '.pdf', 'rb')),
             mimetype='application/pdf',
         )
-
-        # return Response(
-        #     wrap_file(request.environ, open(file_name + '.pdf')),
-        #     mimetype='application/pdf',
-        # )
 
 
 if __name__ == '__main__':
