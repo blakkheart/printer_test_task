@@ -10,4 +10,4 @@ class PrinterAdmin(admin.ModelAdmin):
 
 @admin.register(Check)
 class CheckAdmin(admin.ModelAdmin):
-    pass
+    list_filter = ['printer_id', 'type', 'status']

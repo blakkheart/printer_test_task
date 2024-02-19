@@ -47,7 +47,7 @@ class Check(models.Model):
         help_text='статус чека',
     )
     pdf_file = models.FileField(
-        upload_to='pdf', help_text='ссылка на созданный PDF-файл', blank=True, null=True)
+        upload_to='', help_text='ссылка на созданный PDF-файл', blank=True, null=True)
 
     def __str__(self) -> str:
         return f'{self.printer_id.name} +{self.printer_id.check_type}'

@@ -1,12 +1,16 @@
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-0mwv@v71-=bs%j!3_!1=3b((@-i8wmi_0eayp(e3inal3k7l^t'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(',')
 
 
 INSTALLED_APPS = [
@@ -24,6 +28,7 @@ INSTALLED_APPS = [
     # 3rd party apps
 
     'rest_framework',
+    'adrf',
 ]
 
 MIDDLEWARE = [
@@ -60,11 +65,11 @@ WSGI_APPLICATION = 'forfar.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': 5433,
+        'NAME': os.getenv('POSTGRES_DB', 'currency'),
+        'USER': os.getenv('POSTGRES_USER', 'currency_user'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),
+        'PORT': os.getenv('DB_PORT', 5432),
     }
 }
 
@@ -95,9 +100,14 @@ USE_TZ = True
 
 
 STATIC_URL = 'static/'
-STATIC_ROTT = '/static'
+STATIC_ROTT = BASE_DIR / 'static'
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media/pdf'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://redis:6379')
+CELERY_RESULT_BACKEND = os.getenv(
+    'CELERY_RESULT_BACKEND', "db+sqlite:///celery.sqlite")

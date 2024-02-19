@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 ARG DEBIAN_FRONTEND=noninteractive
-WORKDIR /app/
+WORKDIR /pdf_app/
 
 RUN apt-get update \
     && apt-get install -y \
@@ -16,7 +16,7 @@ RUN pip3 install Werkzeug executor gunicorn
 COPY . .
 EXPOSE 80
 
-CMD ["gunicorn", "-b", "0.0.0.0:80", "--log-file", "-", "app:application"]
+CMD ["gunicorn", "-b", "0.0.0.0:8001", "--log-file", "-", "app:application"]
 
 
 

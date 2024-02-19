@@ -1,0 +1,42 @@
+[
+    {
+        "model": "core.printer",
+        "pk": 1,
+        "fields": {
+            "name": "moscowcity1",
+            "api_key": "1234",
+            "check_type": "KT",
+            "point_id": 1
+        }
+    },
+    {
+        "model": "core.printer",
+        "pk": 2,
+        "fields": {
+            "name": "moscowcity",
+            "api_key": "1234",
+            "check_type": "CL",
+            "point_id": 1
+        }
+    },
+    {
+        "model": "core.printer",
+        "pk": 3,
+        "fields": {
+            "name": "kudrovo",
+            "api_key": "1234",
+            "check_type": "CL",
+            "point_id": 2
+        }
+    },
+    {
+        "model": "core.printer",
+        "pk": 4,
+        "fields": {
+            "name": "kudrovo1",
+            "api_key": "1234",
+            "check_type": "CL",
+            "point_id": 2
+        }
+    }
+]
