@@ -4,27 +4,23 @@ volumes:
   pg_data:
   pdf:
   media:
-  
+  static:
+
 services:
   
   redis:
     image: redis:alpine
-    # ports:
-    #   - "127.0.0.1:6379:6379"
   
   db:
     image: postgres:16.2
     env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-      PGPORT: 5433
-      DB_HOST: db
-    ports:
-      - "127.0.0.1:5433:5433"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
   wkhtmltopdf:
     build: ./wkhtmltopdf/
@@ -33,23 +29,38 @@ services:
     volumes:
       - pdf:/tmp/
 
+  gateway:
+    build:
+      context: ./gateway/
+      dockerfile: ./Dockerfile
+    depends_on:
+      - backend
+    ports:
+      - 8000:8000
+    volumes:
+      - static:/static
+
   backend:
-    build: ./backend/
+    build:
+      context: ./backend/
+      dockerfile: ./Dockerfile-backend
     env_file:
       - path: .env
     depends_on:
-      - db
-      - redis
-    ports:
-      - "127.0.0.1:8000:8000"
+      db:
+        condition: service_healthy
     volumes:
+      - static:/backend_static
       - media:/forfar_app/media/pdf
 
   celery_worker:
-    build: ./backend/
+    build:
+      context: ./backend/
+      dockerfile: ./Dockerfile-celery
     env_file:
       - path: .env
     depends_on:
+      - redis
       - backend
       - wkhtmltopdf
     command: celery -A forfar worker -l info
@@ -57,7 +68,9 @@ services:
       - media:/forfar_app/media/pdf
 
   celery_beat:
-    build: ./backend/
+    build: 
+      context: ./backend/
+      dockerfile: ./Dockerfile-celery
     env_file:
       - path: .env
     depends_on:
@@ -66,5 +79,3 @@ services:
     volumes:
       - media:/forfar_app/media/pdf
 
-
-    

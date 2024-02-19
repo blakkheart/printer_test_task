@@ -2,27 +2,29 @@ from django.db import models
 
 
 class Printer(models.Model):
+    '''Модель принтера.'''
     class CHOICES_TYPE(models.TextChoices):
         KT = 'KT', 'kitchen'
         CL = 'CL', 'client'
 
     name = models.CharField(
-        max_length=50, help_text='название принтера')
+        max_length=50, help_text='Название принтера')
     api_key = models.CharField(
-        max_length=50, help_text='ключ доступа к API')
+        max_length=50, help_text='Ключ доступа к API')
     check_type = models.CharField(
         max_length=50,
         choices=CHOICES_TYPE.choices,
-        help_text='тип чека которые печатает принтер'
+        help_text='Тип чека, которые печатает принтер.'
     )
     point_id = models.IntegerField(
-        help_text='точка к которой привязан принтер')
+        help_text='Точка, к которой привязан принтер')
 
     def __str__(self) -> str:
         return self.name
 
 
 class Check(models.Model):
+    '''Модель чека.'''
     class CHOICES_TYPE(models.TextChoices):
         KT = 'KT', 'kitchen'
         CL = 'CL', 'client'
@@ -36,18 +38,22 @@ class Check(models.Model):
         Printer,
         on_delete=models.CASCADE,
         related_name='printers',
-        help_text='принтер')
+        help_text='Принтер')
     type = models.CharField(max_length=50, choices=CHOICES_TYPE.choices,
-                            help_text='тип чека')
-    order = models.JSONField(help_text='информация о заказе')
+                            help_text='Тип чека')
+    order = models.JSONField(help_text='Информация о заказе')
     status = models.CharField(
         max_length=50,
         choices=CHOICES_STATUS.choices,
         default=CHOICES_STATUS.NW,
-        help_text='статус чека',
+        help_text='Статус чека',
     )
     pdf_file = models.FileField(
-        upload_to='', help_text='ссылка на созданный PDF-файл', blank=True, null=True)
+        upload_to='',
+        help_text='Ссылка на созданный PDF-файл',
+        blank=True,
+        null=True
+    )
 
     def __str__(self) -> str:
-        return f'{self.printer_id.name} +{self.printer_id.check_type}'
+        return f'{self.printer_id.name} + {self.printer_id.check_type}'
